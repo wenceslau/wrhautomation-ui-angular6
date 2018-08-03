@@ -1,0 +1,71 @@
+/* */
+body {
+  margin: 1px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: small;
+  color: #404C51;
+}
+
+/*************Style grid de dados**********/
+
+/* Header coluna com numeros no TurboTable*/
+.col-code-header {
+  text-align: center;
+}
+
+.col-code {
+  text-align: center;
+}
+
+/* Header coluna com numeros no TurboTable*/
+.col-string-header {
+  text-align: left;
+}
+
+/* Header coluna com numeros no TurboTable*/
+.col-string {
+  text-align: left;
+}
+
+/* Header coluna com numeros no TurboTable*/
+.col-number-header {
+  text-align: right;
+}
+
+/* Coluna com numeros no TurboTable*/
+.col-number {
+  text-align: right;
+}
+
+/* Header coluna com datas no TurboTable*/
+.col-date-header {
+  text-align: left;
+}
+
+/* coluna com datas no TurboTable*/
+.col-date {
+  text-align: left;
+}
+
+.col-action-header {
+  text-align: center;
+}
+
+/* Coluna com botoes TurboTable*/
+.col-action {
+  text-align: center;
+}
+
+/*************Style janelas Input de dados**********/
+
+/*Valida so os campos com o alerta*/
+.ng-valid[required], .ng-valid.required  {
+border-left: 1.14px solid #42A948; /* green */
+}
+
+/*Valida so os campos com o alerta*/
+.ng-invalid[required]  {
+border-left: 1.14px solid orangered; /* red */
+}
+
+

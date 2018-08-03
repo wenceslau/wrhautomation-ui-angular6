@@ -1,0 +1,41 @@
+<div class="container">
+
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <app-report *ngIf="rerender" [pdfSrc]="pdfSrc"></app-report>
+    </div>
+  </div>
+
+
+  <div class="container" style="max-width: 350px; margin: auto">
+
+    <p-panel header="Relatório DRE Folha Pagamento">
+
+      <form autocomplete="off" #form="ngForm">
+        <div class="ui-g ui-fluid">
+
+          <div class="ui-g-12 inputFloat">
+            <span class="ui-float-label form-group">
+              <p-dropdown [options]="months" name="month" [(ngModel)]="month" placeholder="." required [style]="{'width':'100%'}"></p-dropdown>
+              <label for="float-input">Mês</label>
+            </span>
+          </div>
+          <div class="ui-g-12 inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" pKeyFilter="num" name="year" [(ngModel)]="year" required minlength="4" maxlength="4" style="width: 100%">
+              <label for="float-input">Ano</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 inputFloat">
+            <button pButton type="submit" icon="fa-search" label="Gerar" [disabled]="!form.valid" (click)="generateReport()"></button>
+          </div>
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+
+        </div>
+      </form>
+    </p-panel>
+  </div>
+
+
+</div>

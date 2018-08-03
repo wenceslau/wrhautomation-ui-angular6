@@ -1,0 +1,137 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <div class="ui-g">
+        <button pButton type="button" icon="fa-plus" label="Novo" (click)="showDialogInput(null)"></button>
+        <button pButton type="button" icon="fa-refresh" (click)="initListDatasource()"></button>
+      </div>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+
+  <div class="ui-g">
+
+    <div class="ui-g-12">
+
+      <p-table #tableDatasource [value]="datasources" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%">ID</th>
+            <th class="col-string-header">Nome</th>
+            <th class="col-string-header">Provedor</th>
+            <th class="col-string-header">Host</th>
+            <th class="col-string-header">Base de dados</th>
+            <th class="col-action-header" style="width: 4%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-datasource>
+          <tr>
+            <td class="col-code">{{datasource.code}}</td>
+            <td class="col-string">{{datasource.name}}</td>
+            <td class="col-string">{{datasource.provider}}</td>
+            <td class="col-string">{{datasource.host}}</td>
+            <td class="col-string">{{datasource.nameDataBase}}</td>
+            <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(datasource.code)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+
+    </div>
+
+    <p-dialog header="Base de Dados" [(visible)]="displayInput" modal="modal" [responsive]="true" [closable]="false" [width]="850">
+      <form autocomplete="off" (ngSubmit)="saveDatasource()" [formGroup]="formDatasource">
+
+        <div class="ui-g">
+
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="description" formControlName="description" required>
+              <label for="float-input">Descricao</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="name" formControlName="name" required>
+              <label for="float-input">Nome</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-dropdown name="provider" [options]="providers" [autoWidth]="false" formControlName="provider" placeholder="." required></p-dropdown>
+              <label for="float-input">Provedor</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="host" formControlName="host" required>
+              <label for="float-input">Host</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="port" formControlName="port" required>
+              <label for="float-input">Porta</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="instance" formControlName="instance">
+              <label for="float-input">Instancia</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="nameDataBase" formControlName="nameDataBase" required>
+              <label for="float-input">Base de dados</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="userDataBase" formControlName="userDataBase" required>
+              <label for="float-input">Usuario</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="passwordDataBase" formControlName="passwordDataBase" required>
+              <label for="float-input">Senha</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-checkbox label="Integração" name="integration" formControlName="integration" binary="true"></p-checkbox>
+            </span>
+          </div>
+
+        </div>
+
+        <p-footer>
+          <hr>
+          <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formDatasource.valid"></button>
+          <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+        </p-footer>
+      </form>
+    </p-dialog>
+
+  </div>
+
+</div>

@@ -1,0 +1,21 @@
+class="ui-g-12 ui-md-6"  para monitores normais ele usa 12 para pqnos e ele usa 6
+
+usar paineis para mostrar titulo do grupo de dados.
+
+npm install chart.js --save  Modulo de graficos do angular
+adicionar no angular.cli.json em scripts o "../node_modules/chart.js/dist/Chart.js"
+
+const mesReferencia = new Date();
+// passa para o prximo mes
+mesReferencia.setMonth(mesReferencia.getMonth() + 1); 
+// volta para o ultimo dia do mes anterior
+mesReferencia.setDate(0); 
+ // pega qtd de dias do mes 
+const quantidade = mesReferencia.getDate(); 
+
+
+
+
+
+
+

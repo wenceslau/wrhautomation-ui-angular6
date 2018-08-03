@@ -1,0 +1,27 @@
+/*Espscamento campo texto tela de cadastro venda*/
+.inputFloat {
+  padding: 16px;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border-left: 1.14px solid #42A948; /* green */
+}
+
+/*Valida o form com o alerta
+.ng-invalid:not(form)  {
+  border-left: 1px solid orangered;
+}
+*/
+
+/*Valida so os campos com o alerta*/
+.ng-invalid[required]  {
+  border-left: 1.14px solid orangered; /* red */
+}
+
+.fontFooterTable {
+  font-weight: bolder;
+}
+
+.txtAling {
+  text-align: left;
+}

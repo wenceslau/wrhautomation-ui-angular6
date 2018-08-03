@@ -1,0 +1,50 @@
+<div class="container">
+  <div class="ui-g navbar">
+
+    <div class="ui-g-1" style="width: 5%">
+      <img src="favicon.ico" height="42">
+    </div>
+    <div class="ui-g-7" style="width: 50%">
+      <div class="systemName">
+        RH Automation
+      </div>
+      <div class="companyName">
+        Att Comercio Importação Exportação Ltda
+      </div>
+    </div>
+    <div class="ui-g-4" style="width: 45%; text-align: right">
+      <div *ngIf="showUser()" style="padding-top: 7px">
+        <div class="userLogged">
+          <!-- a ? se chama operador elves e evita o erro de nullpointer -->
+          Bem Vindo: {{ auth.jwtPayload?.nome}}
+        </div>
+        <div class="lastLogin">
+          <a href="javascript:;" (click)="displayInput = true">Alterar Senha</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-dialog header="Alterar Senha" [showHeader]="false" [(visible)]="displayInput" modal="modal" [responsive]="true" [width]="200">
+    <form autocomplete="off" #f="ngForm">
+
+      <div class="ui-g ui-fluid">
+
+        <div class="ui-g-12">
+          <input pInputText type="password" name="oldp" placeholder="Senha atual" required ngModel #oldp>
+        </div>
+        <div class="ui-g-12">
+          <input pInputText type="password" name="newp" placeholder="Nova senha" required ngModel #newp>
+        </div>
+        <div class="ui-g-12">
+          <button pButton type="submit" label="Alterar" [disabled]="!f.valid" (click)="change(oldp.value, newp.value); oldp.value = ''; newp.value = ''"></button>
+        </div>
+        <div class="ui-g-12">
+          <button pButton type="submit" label="Fechar" (click)="displayInput = false"></button>
+        </div>
+      </div>
+
+    </form>
+  </p-dialog>
+
+</div>

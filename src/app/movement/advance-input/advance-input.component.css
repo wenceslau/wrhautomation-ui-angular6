@@ -1,0 +1,8 @@
+/*Tamnao do lable qdo nao usa label float*/
+.labelSize {
+  font-size: smaller;
+}
+/*Espacamento campo texto telas de cadastro*/
+.inputFloat {
+padding: 16px;
+}

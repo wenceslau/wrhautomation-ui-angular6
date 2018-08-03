@@ -1,0 +1,32 @@
+<div class="container">
+  <form autocomplete="off" #form="ngForm">
+    <p-toolbar>
+      <div class="ui-toolbar-group-left">
+
+        <div class="ui-g">
+          <p-dropdown [options]="months" name="month" [(ngModel)]="month" placeholder="Mes" required></p-dropdown>
+          <input pInputText type="text" pKeyFilter="num" name="year" [(ngModel)]="year" placeholder="Ano" required minlength="4" maxlength="4" ngModel
+            style="width: 70px">
+          <button pButton type="submit" icon="fa-search" [disabled]="!form.valid" (click)="search()"></button>
+          <button pButton type="button" icon="fa-lock" [disabled]="!canClose" (click)="close()"></button>
+          <button pButton type="button" icon="fa-print" [disabled]="!canPrint" (click)="generateReport()"></button>
+        </div>
+
+      </div>
+      <div class="ui-toolbar-group-right">
+        <div class="ui-g">
+          <div style="padding-top: 4px">
+            <div style="text-align: right">{{handler.infoMessage}}</div>
+          </div>
+        </div>
+      </div>
+    </p-toolbar>
+
+    <p-tabView>
+      <p-tabPanel [header]="company.nameFantasy" *ngFor="let company of companies; let i = index" [selected]="i == 0">
+        <app-payroll-detail [referenceMonth]="getReferenceMonth()" [idCompany]='company.code' [isPayrollClosed]='isPayrollClosed'></app-payroll-detail>
+      </p-tabPanel>
+    </p-tabView>
+  </form>
+
+</div>

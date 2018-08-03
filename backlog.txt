@@ -1,0 +1,17 @@
+Nao inserir cp quando valor null ou 0 - OK
+não salvar tb qdo valor null ou zero - OK
+opcao para alterar senha abaixo do bem vindo - OK
+criar tb comissão e testar - OK
+retirar logs - OK
+alinhar texto bem vindo - OK
+ocultar menu de acordo com o perfil - OK
+ja carregar mes e ano nos report - OK
+limpar msg header ao entrar cadastros - ok
+retirar logs console - ok
+colocar opcao reset de senha - ok
+colocar label para senha inicial @1234 - ok
+
+e colocar logs no integration e api
+report aliquota e empregdo 
+alinhar label bemvindo a direita
+

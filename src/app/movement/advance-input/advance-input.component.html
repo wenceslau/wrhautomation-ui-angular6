@@ -1,0 +1,52 @@
+<p-dialog header="Adiantamento" visible="true" modal="modal" [responsive]="true" [closable]="false" [width]="850">
+  <div class="ui-g">
+    <div class="ui-g-12 ui-fluid">
+      <span>
+        <label class="labelSize">Empresa</label>
+        <p-dropdown name="company" [options]="companies" name="company" [(ngModel)]="company" [autoWidth]="false" optionLabel="nameFantasy"
+          placeholder="." (onChange)="changeCompany()" required [readonly]="readonlyEmployeFields"></p-dropdown>
+      </span>
+    </div>
+  </div>
+  <form autocomplete="off" (ngSubmit)="save()" [formGroup]="formInput">
+    <div>
+      <div class="ui-g">
+
+        <div class="ui-g-12 ui-fluid">
+          <span>
+            <label class="labelSize">Colaborador</label>
+            <p-dropdown name="employee" [options]="employees" [autoWidth]="false" optionLabel="person.name" formControlName="employee"
+              placeholder="." required [readonly]="readonlyEmployeFields"></p-dropdown>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid ">
+          <span>
+            <label class="labelSize">Valor</label>
+            <input pInputText type="text" name="amount" formControlName="amount" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+              required>
+          </span>
+        </div> 
+
+        <div class="ui-g-3 ui-fluid">
+          <span>
+            <label class="labelSize">Desconto</label>
+            <input pInputText type="text" name="discount" formControlName="discount" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+              required>
+          </span>
+        </div>
+        <div class="ui-g-12 ui-fluid">
+          <span>
+            <label class="labelSize">Informação</label>
+            <input pInputText type="text" name="information" formControlName="information" required>
+          </span>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <hr>
+      <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formInput.valid"></button>
+      <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+    </p-footer>
+  </form>
+</p-dialog>

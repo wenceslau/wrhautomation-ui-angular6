@@ -1,0 +1,425 @@
+<div class="container">
+
+  <div class="ui-g">
+
+    <div class="ui-g-12">
+
+      <p-table #tablePayrolls [value]="payrolls" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%"> ID</th>
+            <th class="col-string-header" style="width: 30%">Colaborador</th>
+            <th class="col-string-header" >Salário</th>
+            <th class="col-number-header">Dias Trabalhado</th>
+            <th class="col-number-header">Proventos</th>
+            <th class="col-number-header">Deduções</th>
+            <th class="col-number-header">Total Receber</th>
+            <th class="col-action-header" style="width: 4%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-payr>
+          <tr>
+            <td class="col-code">{{payr.code}}</td>
+            <td class="col-string">{{payr.employee.person.nickname}}</td>
+            <td class="col-string">{{payr.employee.salary}}</td>
+            <td class="col-number">{{payr.workedDays}}</td>
+            <td class="col-number">
+              <span [style.color]="'blue'">{{totalProventos(payr) | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'red'">{{totalDiscount(payr) | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">{{ totalReceive(payr) | number:'1.2-3'}}</td>
+            <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(payr)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+
+
+      <p-dialog header="Folha Pagamento [{{employee?.person?.name}}]" [(visible)]="displayInput" modal="modal" [responsive]="true"
+        [closable]="false" [width]="850">
+
+        <form autocomplete="off" (ngSubmit)="savePayroll()" [formGroup]="formPayroll">
+
+          <div class="ui-g">
+
+            <div class="ui-g-6 ui-fluid">
+              <span>
+                <label class="labelSize">Colaborador</label>
+                <input pInputText type="text" [value]="employee?.person?.name" [style.background-color]="'lightgrey'" [readonly]="true">
+              </span>
+            </div>
+            <div class="ui-g-2 ui-fluid">
+              <span>
+                <label class="labelSize">Data Contratação</label>
+                <input pInputText type="text" value="{{employee?.dateOfHiring | date:' dd/MM/yyyy'}}" [style.background-color]="'lightgrey'"
+                  [readonly]="true">
+              </span>
+            </div>
+            <div class="ui-g-2 ui-fluid">
+              <span>
+                <label class="labelSize">Situação</label>
+                <input pInputText type="text" [value]="employee?.situation" [style.background-color]="'lightgrey'" [readonly]="true">
+              </span>
+            </div>
+            <div class="ui-g-2 ui-fluid">
+              <span>
+                <label class="labelSize">Tipo Salario</label>
+                <input pInputText type="text" [value]="employee?.salary" [style.background-color]="'lightgrey'" [readonly]="true">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Dias trabalhado</label>
+                <input pInputText type="text" name="workedDays" formControlName="workedDays" pKeyFilter="num" maxlength="2" [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'"
+                  [readonly]="!formPayroll.get('manualInput').value" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Dias Ferias</label>
+                <input pInputText type="text" name="vacationDays" formControlName="vacationDays" pKeyFilter="num" maxlength="2" [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'"
+                  [readonly]="!formPayroll.get('manualInput').value" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Ferias Periodo</label>
+                <input pInputText type="text" name="vacationPeriod" formControlName="vacationPeriod" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Comissão</label>
+                <input pInputText type="text" name="commission" formControlName="commission" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">DSR</label>
+                <input pInputText type="text" name="dsr" formControlName="dsr" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Salario Fixo</label>
+                <input pInputText type="text" name="fixedSalary" formControlName="fixedSalary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="(formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!(formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Quebra Caixa</label>
+                <input pInputText type="text" name="quebraCaixa" formControlName="quebraCaixa" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Garantia</label>
+                <input pInputText type="text" name="garantia" formControlName="garantia" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="(formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!(formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Salário Família</label>
+                <input pInputText type="text" name="familySalary" formControlName="familySalary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                [style.background-color]="(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                [readonly]="!(formPayroll.get('partialInput').value || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Salario Maternidade</label>
+                <input pInputText type="text" name="maternityPay" formControlName="maternityPay" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation === 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation === 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="(employee?.situation === 'MATERNIDADE') || formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Diferenca de Ferias</label>
+                <input pInputText type="text" name="vacationDifference" formControlName="vacationDifference" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Complemento 13</label>
+                <input pInputText type="text" name="complement13" formControlName="complement13" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Prêmio</label>
+                <input pInputText type="text" name="prize" formControlName="prize" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Hora Extra</label>
+                <input pInputText type="text" name="extraHour" formControlName="extraHour" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Feriado Trabalhado</label>
+                <input pInputText type="text" name="holidayWorked" formControlName="holidayWorked" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Bonus</label>
+                <input pInputText type="text" name="bonus" formControlName="bonus" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+          </div>
+
+          <hr>
+
+          <div class="ui-g">
+
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Férias Pagas Período</label>
+                <input pInputText type="text" name="vacationPaid" formControlName="vacationPaid" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Horas Falta</label>
+                <input pInputText type="text" name="sizeAbsencesHours" formControlName="sizeAbsencesHours" pKeyFilter="num" maxlength="3"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value) ? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE') || formPayroll.get('manualInput').value)" [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Faltas</label>
+                <input pInputText type="text" name="absences" formControlName="absences" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Adiantamento</label>
+                <input pInputText type="text" name="advanceSalary" formControlName="advanceSalary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Farmácia</label>
+                <input pInputText type="text" name="drugstore" formControlName="drugstore" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Convênio Médico</label>
+                <input pInputText type="text" name="medicalAgreement" formControlName="medicalAgreement" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Cont. Sindical</label>
+                <input pInputText type="text" name="syndicateContribution" formControlName="syndicateContribution" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Qtd V. Transp.</label>
+                <input pInputText type="text" name="numTransportVaucher" formControlName="numTransportVaucher" pKeyFilter="num" maxlength="3"
+                  [style.background-color]="((employee?.situation !== 'MATERNIDADE' && employee?.transportVoucher)  || formPayroll.get('manualInput').value)? 'white' : 'lightgrey'"
+                  [readonly]="!((employee?.situation !== 'MATERNIDADE' && employee?.transportVoucher) || formPayroll.get('manualInput').value)"
+                  [required]="((employee?.situation !== 'MATERNIDADE' && employee?.transportVoucher) || formPayroll.get('manualInput').value)">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Vale Transp.</label>
+                <input pInputText type="text" name="transportVaucher" formControlName="transportVaucher" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">INSS</label>
+                <input pInputText type="text" name="inss" formControlName="inss" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">INSS Férias</label>
+                <input pInputText type="text" name="inssVacation" formControlName="inssVacation" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">IRRF</label>
+                <input pInputText type="text" name="irrf" formControlName="irrf" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+
+          </div>
+
+          <hr>
+
+          <div class="ui-g">
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Arredondamento</label>
+                <input pInputText type="text" name="rounding" formControlName="rounding" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: true }"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+            <div class="ui-g-2 ui-fluid">
+              <span class="form-group">
+                <label class="labelSize">Valor a Pagar</label>
+                <input pInputText type="text" name="amountToPay" formControlName="amountToPay" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: true }"
+                  [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                  [required]="formPayroll.get('manualInput').value">
+              </span>
+            </div>
+            <div class="ui-g-2 ui-fluid">
+                <span class="form-group">
+                  <label class="labelSize">FGTS</label>
+                  <input pInputText type="text" name="fgts" formControlName="fgts" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: true }"
+                    [style.background-color]="formPayroll.get('manualInput').value ? 'white' : 'lightgrey'" [readonly]="!formPayroll.get('manualInput').value"
+                    [required]="formPayroll.get('manualInput').value">
+                </span>
+              </div>
+          </div>
+
+          <p-footer>
+            <hr>
+            <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formPayroll.valid || isPayrollClosed"></button>
+            <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+            <button pButton type="button" pTooltip="Colaborador" pButton icon="fa-address-book" [disabled]="isPayrollClosed" (click)="showEmployeeInput(employee?.code)"></button>
+            <button pButton type="button" pTooltip="Adiantamento" pButton icon="fa-minus-square" [disabled]="isPayrollClosed" class="ui-button-warning" (click)="showAdvanceInput(employee?.code)"></button>
+            <button pButton type="button" pTooltip="Férias" pButton icon="fa-calendar" [disabled]="isPayrollClosed" class="ui-button-warning" (click)="showVacationInput(employee?.code)"></button>
+            <button pButton type="button" pTooltip="Flpt2" pButton icon="fa-stop-circle" [disabled]="isPayrollClosed" class="ui-button-warning" (click)="showPlpt2Input(employee?.code)"></button>
+
+            <span class="form-group" style="padding-left: 20px">
+              <p-checkbox label="Cálculo Parcial" name="partialInput" formControlName="partialInput" binary="true"></p-checkbox>
+            </span>
+            <span class="form-group" style="padding-left: 20px">
+              <p-checkbox label="Cálculo Manual" name="manualInput" formControlName="manualInput" binary="true" (onChange)="onChangeManualInput()"></p-checkbox>
+            </span>
+          </p-footer>
+
+        </form>
+      </p-dialog>
+
+
+      
+    <app-employee-input 
+    *ngIf="displayEmployeeInput"
+    [objectCodeInput]="employeeCode"
+    [closeAfterSaveInput]="closeComponentInputAfterSave"
+    (objectAddedInput)="addedEmployeeEvent($event)"
+    (hideComponentInput)="hideComponentInputEvent($event)">
+    </app-employee-input>
+
+      <app-advance-input 
+      *ngIf="displayAdvanceInput"
+      [employee]="employee"
+      [referenceMonthInput]="filter.referenceMonth"
+      [objectCodeInput]="advanceCode"
+      [closeAfterSaveInput]="closeComponentInputAfterSave"
+      (objectAddedInput)="addedAdvanceEvent($event)"
+      (hideComponentInput)="hideComponentInputEvent($event)">
+      </app-advance-input>
+
+      <app-vacation-input 
+      *ngIf="displayVacationInput"
+      [employee]="employee"
+      [referenceMonthInput]="filter.referenceMonth"
+      [objectCodeInput]="vacationCode"
+      [closeAfterSaveInput]="closeComponentInputAfterSave"
+      (objectAddedInput)="addedVacationEvent($event)"
+      (hideComponentInput)="hideComponentInputEvent($event)">
+      </app-vacation-input>
+
+      <app-plpt2-input 
+      *ngIf="displayPlpt2Input"
+      [employee]="employee"
+      [referenceMonthInput]="filter.referenceMonth"
+      [objectCodeInput]="plpt2Code"
+      [closeAfterSaveInput]="closeComponentInputAfterSave"
+      (objectAddedInput)="addePlpt2Event($event)"
+      (hideComponentInput)="hideComponentInputEvent($event)">
+      </app-plpt2-input>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,418 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <form autocomplete="off" #form="ngForm">
+        <div class="ui-g">
+            <p-dropdown [options]="months" name="month" [(ngModel)]="month" placeholder="Mes" required></p-dropdown>
+            <input pInputText type="text" pKeyFilter="num" name="year" [(ngModel)]="year" placeholder="Ano" required minlength="4" maxlength="4" ngModel
+              style="width: 70px">
+          <button pButton type="button" icon="fa-search" [disabled]="!form.valid" (click)="search()"></button>
+          <button pButton type="button" icon="fa-plus" [disabled]="isPayrollClosed" (click)="showDialogInput(null)"></button>
+        </div>
+      </form>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+
+  <div class="ui-g">
+
+    <div class="ui-g-12">
+
+      <p-table #tableRescission [value]="rescissions" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%">ID</th>
+            <th class="col-date-header">Data Rescisão</th>
+            <th class="col-string-header">Empresa</th>
+            <th class="col-string-header" style="width: 25%">Colaborador</th>
+            <th class="col-number-header">Receitas</th>
+            <th class="col-number-header">Deduções</th>
+            <th class="col-number-header">FGTS</th>
+            <th class="col-number-header">Total Receber</th>
+            <th class="col-action-header" style="width: 8%"></th>
+
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rescission>
+          <tr>
+            <td class="col-code">{{rescission.code}}</td>
+            <td class="col-date">{{rescission.dataRescisision | date:' dd/MM/yyyy'}}</td>
+            <td class="col-string">{{rescission.employee.company.nameFantasy}}</td>
+            <td class="col-string">{{rescission.employee.person.nickname}}</td>
+            <td class="col-number">
+              <span [style.color]="'blue'">{{rescission.totalReceitas | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'red'">{{rescission.totalDeducoes | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">{{rescission.fgts | number:'1.2-3'}}</td>
+            <td class="col-number">{{rescission.valorLiquido | number:'1.2-3'}}</td>
+            <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(rescission.code)"></button>
+              <button pButton icon="fa-trash" pTooltip="Excluir" tooltipPosition="top" (click)="confirmDelete(rescission.code)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+
+    </div>
+
+    <p-dialog header="Recisão" [(visible)]="displayInput" modal="modal" [responsive]="true" [closable]="false" [width]="900">
+
+      <div class="ui-g">
+        <div class="ui-g-12 ui-fluid inputFloat">
+          <span class="ui-float-label">
+            <p-dropdown name="company" [options]="companies" name="company" [(ngModel)]="company" [autoWidth]="false" optionLabel="nameFantasy"
+              placeholder="." (onChange)="changeCompany()" required></p-dropdown>
+            <label for="float-input">Empresa</label>
+          </span>
+        </div>
+      </div>
+
+      <form autocomplete="off" (ngSubmit)="saveRescission()" [formGroup]="formRescission">
+
+        <div>
+          <!-- Colaborador -->
+          <div class="ui-g">
+            <div class="ui-g-6 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <p-dropdown name="employee" [options]="employees" [autoWidth]="false" optionLabel="person.name" formControlName="employee"
+                  placeholder="." required></p-dropdown>
+                <label for="float-input">Colaborador</label>
+              </span>
+            </div>
+
+            <div class="ui-g-3 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <p-calendar dateFormat="dd/mm/yy" name="dataRescisision" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="dataRescisision"
+                  required></p-calendar>
+                <label for="float-input">Data Rescisão</label>
+              </span>
+            </div>
+            <div class="ui-g-3 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input id="input" type="text" size="30" pInputText value="{{referenceMonth | date:' MM/yyyy'}}" readonly="true">
+                <label for="float-input">Folha Pagamento</label>
+              </span>
+            </div>
+          </div>
+ 
+          <p-panel header="Proventos" [style]="{'margin-bottom':'20px'}">
+
+            <!-- Receitas -->
+            <div class="ui-g">
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="saldoSalario_50" formControlName="saldoSalario_50" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">50 Saldo Salário</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="comissao_51" formControlName="comissao_51" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">51 Comissão</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="gratificacao_52" formControlName="gratificacao_52" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">52 Gratificação</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="adicionalInsalubridade_53" formControlName="adicionalInsalubridade_53" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">53 Adicional Insalubridade</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="adicionalPericuliosidade_54" formControlName="adicionalPericuliosidade_54" currencyMask
+                    [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">54 Adicioanal Periculioside</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="adicionalNoturno_55" formControlName="adicionalNoturno_55" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">55 Adicional Noturno</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="horasExtras_56" formControlName="horasExtras_56" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">56 Horas Extras</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="gorjetas_57" formControlName="gorjetas_57" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">57 Gorjetas</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="dsr_58" formControlName="dsr_58" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">58 DSR</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="dsrSobreSaldoSalario_59" formControlName="dsrSobreSaldoSalario_59" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">59 DSR Saldo Salário</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="multaArtigo447_60" formControlName="multaArtigo447_60" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">60 Multa Artigo 447</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="multaArtigo479_61" formControlName="multaArtigo479_61" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">61 Multa Artigo 449</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="salarioFamilia_62" formControlName="salarioFamilia_62" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">62 Salário Familia</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="salarioProporcional_63" formControlName="salarioProporcional_63" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">63 Salário Proporcional.</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="_13SalarioExercicioAnterior_64" formControlName="_13SalarioExercicioAnterior_64" currencyMask
+                    [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">64 13º Salário Ex. Anterior</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="feriasProporcional_65" formControlName="feriasProporcional_65" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">65 Férias Proporcional.</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="feriasVencidas_66" formControlName="feriasVencidas_66" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">66 Férias Vencidas</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="tercoConstituicional_68" formControlName="tercoConstituicional_68" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">68 Terço Constitucional</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="avisoPrevioIndenizado_69" formControlName="avisoPrevioIndenizado_69" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">69 Aviso Previo Indenizado.</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="_13SalarioAvisoPrevio_70" formControlName="_13SalarioAvisoPrevio_70" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">70 13º Salário Aviso Previo</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="feriasAvisoPrevio_71" formControlName="feriasAvisoPrevio_71" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">71 Férias Aviso Previo</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="diversos_95" formControlName="diversos_95" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">95 Diversos</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="ajusteSaldoDevedor_99" formControlName="ajusteSaldoDevedor_99" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">99 Ajuste Saldo Devedor</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="indenizacaoExperiencia_000" formControlName="indenizacaoExperiencia_000" currencyMask
+                    [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Indenização Experiência</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="complementoPiso_000" formControlName="complementoPiso_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Complemento Piso</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText [style.color]="'blue'" type="text" name="totalReceitas" formControlName="totalReceitas" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                    readonly="true">
+                  <label for="float-input">Total Receitas</label>
+                </span>
+              </div>
+            </div>
+
+          </p-panel>
+
+          <p-panel header="Deduções" [style]="{'margin-bottom':'20px'}">
+
+            <!-- Deducoes -->
+            <div class="ui-g">
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="pensaAlimenticia_100" formControlName="pensaAlimenticia_100" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">100 Pensão Alimenticia</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="adiantamentoSalarial_101" formControlName="adiantamentoSalarial_101" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">101 Adiantamento Salarial</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="adiantamento13Salario_102" formControlName="adiantamento13Salario_102" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">102 Adiantamento 13º Salário</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="avisoPrevioIndenizado_103" formControlName="avisoPrevioIndenizado_103" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">103 Aviso Prévio Indenizado</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="previdenciaSocial_112_1" formControlName="previdenciaSocial_112_1" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input"> 112.1 Previdencia Social</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="previdenciaSocial13Salario_112_2" formControlName="previdenciaSocial13Salario_112_2"
+                    currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">112.2 Prev. Social 13º Salário</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="irrf_114" formControlName="irrf_114" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">114 IRRF</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="irrf13Salario_114_1" formControlName="irrf13Salario_114_1" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">114.1 IRRF 13º Salário</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="arredondamentoAnterior_115" formControlName="arredondamentoAnterior_115" currencyMask
+                    [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">115 Arredondamento</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="faltas_000" formControlName="faltas_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Faltas</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="convenioMedico_000" formControlName="convenioMedico_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Convenio Médico</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="valeTransporte_000" formControlName="valeTransporte_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Vale Transporte</label>
+                </span>
+              </div>
+
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="descMedicamento_000" formControlName="descMedicamento_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Desconto Medicamento</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText type="text" name="contSindical_000" formControlName="contSindical_000" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+                  <label for="float-input">00 Contruibuição Sindical</label>
+                </span>
+              </div>
+              <div class="ui-g-3 ui-fluid inputFloat">
+                <span class="ui-float-label form-group">
+                  <input pInputText [style.color]="'red'" type="text" name="totalDeducoes" formControlName="totalDeducoes" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                    readonly="true">
+                  <label for="float-input">Total Deduções</label>
+                </span>
+              </div>
+            </div>
+          </p-panel>
+      
+          <!-- Totais -->
+          <div class="ui-g">
+            <div class="ui-g-3 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" [style.fontWeight]="'bold'" name="valorLiquido" formControlName="valorLiquido" currencyMask
+                  [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }" readonly="true">
+                <label for="float-input">Valor Liquido</label>
+              </span>
+            </div>
+            <div class="ui-g-3 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="fgts" formControlName="fgts" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">FGTS</label>
+              </span>
+            </div>
+            <div class="ui-g-3 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <p-checkbox label="Solicitada" name="solicitada" formControlName="solicitada" binary="true"></p-checkbox>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <p-footer>
+          <hr>
+          <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formRescission.valid"></button>
+          <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+        </p-footer>
+      </form>
+    </p-dialog>
+  </div>
+
+</div>

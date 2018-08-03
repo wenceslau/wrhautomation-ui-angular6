@@ -1,0 +1,106 @@
+  <p-dialog header="Folha Pagamento" [(visible)]="displayInput" modal="modal" [responsive]="true" [closable]="false" [width]="900">
+
+    <form autocomplete="off" (ngSubmit)="saveVacation()" [formGroup]="formVacation">
+
+      <div style="height: 350px">
+
+        <div class="ui-g">
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-dropdown name="employee" [options]="employees" [autoWidth]="false" optionLabel="person.name" formControlName="employee"
+                placeholder="." required></p-dropdown>
+              <label for="float-input">Colaborador</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-calendar dateFormat="dd/mm/yy" name="initialReference" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="initialReference"
+                required></p-calendar>
+              <label for="float-input">Periodo Inicial Aquisitivo</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-calendar dateFormat="dd/mm/yy" name="finalReference" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="finalReference"
+                required></p-calendar>
+              <label for="float-input">Periodo Final Aquisitivo</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-calendar dateFormat="dd/mm/yy" name="initialEnjoy" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="initialEnjoy"
+                required></p-calendar>
+              <label for="float-input">Periodo Incial de Ferias</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-calendar dateFormat="dd/mm/yy" name="finalEnjoy" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="finalEnjoy"
+                required></p-calendar>
+              <label for="float-input">Periodo Final de Ferias</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="amountVacation" formControlName="amountVacation" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+              <label for="float-input">Valor Ferias</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="amoutThird" formControlName="amoutThird" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+              <label for="float-input">Terço Ferias</label>
+            </span>
+          </div>
+
+          <div class="ui-g-4 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-checkbox label="Calculo Manual" name="manualInput" formControlName="manualInput" binary="true" (onChange)="onChangeManualInput()"></p-checkbox>
+            </span>
+          </div>
+        </div>
+        <hr>
+
+        <br>
+        <div class="ui-g">
+          <div class="ui-g-3 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="daysOfVacation" formControlName="daysOfVacation">
+              <label for="float-input">Dias Ferias</label>
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="familySalary" formControlName="familySalary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+              <label for="float-input">Salario Familia</label>
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="inss" formControlName="inss" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+              <label for="float-input">INSS</label>
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="irrf" formControlName="irrf" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+              <label for="float-input">IRRF</label>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <p-footer>
+        <hr>
+        <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formVacation.valid"></button>
+        <button pButton type="button" pButton icon="fa-close" label="Fechar" (click)="hidenDialogInput()"></button>
+      </p-footer>
+
+    </form>
+  </p-dialog>

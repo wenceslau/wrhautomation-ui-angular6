@@ -1,0 +1,116 @@
+<p-dialog header="Ferias" visible="true" modal="modal" [responsive]="true" [closable]="false" [width]="900">
+
+  <div class="ui-g">
+    <div class="ui-g-12 ui-fluid">
+      <span class="form-group">
+        <label class="labelSize">Empresa</label>
+        <p-dropdown name="company" [options]="companies" name="company" [(ngModel)]="company" [autoWidth]="false" optionLabel="nameFantasy"
+          placeholder="." (onChange)="changeCompany()" [readonly]="readonlyEmployeFields" required></p-dropdown>
+      </span>
+    </div>
+  </div>
+
+  <form autocomplete="off" (ngSubmit)="save()" [formGroup]="formInput">
+
+    <div>
+
+      <div class="ui-g">
+        <div class="ui-g-12 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Colaborador</label>
+            <p-dropdown name="employee" [options]="employees" [autoWidth]="false" optionLabel="person.name" formControlName="employee"
+              placeholder="." [readonly]="readonlyEmployeFields" required></p-dropdown>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Período Inicial Aquisitivo</label>
+            <p-calendar dateFormat="dd/mm/yy" name="initialReference" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="initialReference"
+              required></p-calendar>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Período Final Aquisitivo</label>
+            <p-calendar dateFormat="dd/mm/yy" name="finalReference" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="finalReference"
+              required></p-calendar>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Período Incial de Ferias</label>
+            <p-calendar dateFormat="dd/mm/yy" name="initialEnjoy" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="initialEnjoy"
+              required></p-calendar>
+          </span>
+        </div>
+        <div class="ui-g-6 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Período Final de Ferias</label>
+            <p-calendar dateFormat="dd/mm/yy" name="finalEnjoy" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="finalEnjoy"
+              required></p-calendar>
+          </span>
+        </div>
+        <div class="ui-g-3 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Valor Férias</label>
+            <input pInputText type="text" name="amountVacation" formControlName="amountVacation" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+              required>
+          </span>
+        </div>
+        <div class="ui-g-3 ui-fluid">
+          <span class="form-group">
+            <label class="labelSize">Terço Férias</label>
+            <input pInputText type="text" name="amoutThird" formControlName="amoutThird" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+              required>
+          </span>
+        </div>
+
+      </div>
+      <hr>
+      <p-panel header="Valores Calculados" toggleable="true" [style]="{'margin-bottom':'33px'}">
+
+        <div class="ui-g">
+          <div class="ui-g-3 ui-fluid">
+            <span class="form-group">
+              <label class="labelSize">Dias Férias</label>
+              <input pInputText type="text" name="daysOfVacation" formControlName="daysOfVacation" [style.background-color]="formInput.get('manualInput').value ? 'white' : 'lightgrey'"
+                [required]="formInput.get('manualInput').value">
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid">
+            <span class="form-group">
+              <label class="labelSize">Salário Família</label>
+              <input pInputText type="text" name="familySalary" formControlName="familySalary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                [style.background-color]="formInput.get('manualInput').value ? 'white' : 'lightgrey'" [required]="formInput.get('manualInput').value">
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid">
+            <span class="form-group">
+              <label class="labelSize">INSS</label>
+              <input pInputText type="text" name="inss" formControlName="inss" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                [style.background-color]="formInput.get('manualInput').value ? 'white' : 'lightgrey'" [required]="formInput.get('manualInput').value">
+            </span>
+          </div>
+          <div class="ui-g-3 ui-fluid">
+            <span class="form-group">
+              <label class="labelSize">IRRF</label>
+              <input pInputText type="text" name="irrf" formControlName="irrf" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                [style.background-color]="formInput.get('manualInput').value ? 'white' : 'lightgrey'" [required]="formInput.get('manualInput').value">
+            </span>
+          </div>
+        </div>
+      </p-panel>
+
+    </div>
+
+    <p-footer>
+      <hr>
+      <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formInput.valid"></button>
+      <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+      <span class="form-group" style="padding-left: 20px">
+        <p-checkbox label="Calculo Manual" name="manualInput" formControlName="manualInput" binary="true" (onChange)="onChangeManualInput()"></p-checkbox>
+      </span>
+    </p-footer>
+
+  </form>
+</p-dialog>

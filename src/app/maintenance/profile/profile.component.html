@@ -1,0 +1,87 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <div class="ui-g">
+        <button pButton type="button" icon="fa-plus" label="Novo" (click)="showDialogInput(null)"></button>
+        <button pButton type="button" icon="fa-refresh" (click)="initListProfile()"></button>
+      </div>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-table #tableProfile [value]="profiles" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%">ID</th>
+            <th class="col-string-header" style="width: 15%">Nome</th>
+            <th class="col-string-header">Permissões</th>
+            <th class="col-action-header" style="width: 4%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-profile>
+          <tr>
+            <td class="col-code">{{profile.code}}</td>
+            <td class="col-string">{{profile.name}}</td>
+            <td class="col-string">
+              <span *ngFor="let item of profile.permissions">{{item.role}}, </span>
+            </td>
+            <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(profile.code)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+    </div>
+
+    <p-dialog header="Base de Dados" [(visible)]="displayInput" modal="modal" [responsive]="true" [closable]="false" [width]="600">
+      <form autocomplete="off" (ngSubmit)="saveProfile()" [formGroup]="formProfile">
+        <div style="height: 250px">
+          <div class="ui-g">
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="name" formControlName="name" required>
+                <label for="float-input">Nome</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <p-multiSelect name="permissions" [options]="permissions" optionLabel="description" formControlName="permissions" filter="false"
+                  defaultLabel="." scrollHeight="100px"></p-multiSelect>
+                <label for="float-input">Permissões</label>
+              </span>
+            </div>
+            <div class="ui-g-12 ui-fluid ">
+              <p-scrollPanel [style]="{width: '100%', height: '100px'}" styleClass="custombar1">
+                <div style="padding:1em;line-height:1.5">
+                  <span class="">
+                    <li *ngFor="let item of formProfile.get('permissions').value">{{item.description}}</li>
+                  </span>
+                </div>
+              </p-scrollPanel>
+
+            </div>
+
+          </div>
+        </div>
+        <p-footer>
+          <hr>
+          <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formProfile.valid"></button>
+          <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+        </p-footer>
+      </form>
+    </p-dialog>
+
+  </div>
+
+</div>

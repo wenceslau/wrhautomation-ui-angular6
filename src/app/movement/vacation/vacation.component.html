@@ -1,0 +1,91 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <form autocomplete="off" #form="ngForm">
+        <div class="ui-g">
+            <p-dropdown [options]="months" name="month" [(ngModel)]="month" placeholder="Mes" required></p-dropdown>
+            <input pInputText type="text" pKeyFilter="num" name="year" [(ngModel)]="year" placeholder="Ano" required minlength="4" maxlength="4" ngModel
+              style="width: 70px">
+          <button pButton type="button" icon="fa-search" [disabled]="!form.valid" (click)="search()"></button>
+          <button pButton type="button" icon="fa-plus" [disabled]="isPayrollClosed" (click)="showComponentInput(null)"></button>
+        </div>
+      </form>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+
+  <div class="ui-g">
+
+    <div class="ui-g-12">
+
+      <p-table #tableRescission [value]="vacations" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%">ID</th>
+            <th class="col-string-header" style="width: 8%">Empresa</th>
+            <th class="col-string-header" style="width: 16%">Colaborador</th>
+            <th class="col-date-header" style="width: 8%">Inicio</th>
+            <th class="col-date-header" style="width: 8%">Fim</th>
+            <th class="col-string-header" style="width: 4%">Dias</th>
+            <th class="col-number-header" style="width: 7%">Valor</th>
+            <th class="col-number-header" style="width: 7%">Terço</th>
+            <th class="col-number-header" style="width: 7%">Sal. Fam.</th>
+            <th class="col-number-header" style="width: 7%">INSS</th>
+            <th class="col-number-header" style="width: 6%">IRRF</th>
+            <th class="col-number-header" style="width: 10%">Total Receber</th>
+            <th class="col-action-header" style="width: 8%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-vacation>
+          <tr>
+            <td class="col-code">{{vacation.code}}</td>
+            <td class="col-string">{{vacation.employee.company.nameFantasy}}</td>
+            <td class="col-string">{{vacation.employee.person.nickname}}</td>
+            <td class="col-date">{{vacation.initialEnjoy | date:' dd/MM/yyyy'}}</td>
+            <td class="col-date">{{vacation.finalEnjoy | date:' dd/MM/yyyy'}}</td>
+            <td class="col-date">{{vacation.daysOfVacation}}</td>
+            <td class="col-number">
+              <span [style.color]="'blue'">{{vacation.amountVacation | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'blue'">{{vacation.amoutThird | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'red'">{{vacation.familySalary | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'red'">{{vacation.inss | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">
+              <span [style.color]="'red'">{{vacation.irrf | number:'1.2-3'}}</span>
+            </td>
+            <td class="col-number">{{ totalReceive(vacation) | number:'1.2-3'}}</td>
+            <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showComponentInput(vacation.code)"></button>
+              <button pButton icon="fa-trash" pTooltip="Excluir" tooltipPosition="top" (click)="confirmDelete(vacation.code)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+
+      <app-vacation-input 
+      *ngIf="displayComponentInput"
+      [referenceMonthInput]="getReferenceMonth()"
+      [objectCodeInput]="objectCode"
+      [closeAfterSaveInput]="closeComponentInputAfterSave"
+      (objectAddedInput)="addedObjectEvent($event)"
+      (hideComponentInput)="hideComponentInputEvent($event)">
+    </app-vacation-input>
+
+    </div>
+ </div>
+
+</div>

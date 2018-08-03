@@ -1,0 +1,300 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <div class="ui-g">
+        <button pButton type="button" icon="fa-plus" label="Novo" (click)="showDialogInput(null)"></button>
+        <button pButton type="button" icon="fa-refresh" (click)="initListAliquot()"></button>
+      </div>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <p-accordion (onOpen)="onTabOpen($event)">
+        <p-accordionTab header="IRRF">
+          <p-table #tableAliquotIrrf [value]="aliquots" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="col-number-header">Valor inicial</th>
+                <th class="col-number-header">Valor final</th>
+                <th class="col-number-header">Percentual</th>
+                <th class="col-number-header">Dedução</th>
+                <th class="col-action-header" style="width: 4%"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-aliquot>
+              <tr>
+                <td class="col-number">{{aliquot.initialValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.finalValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.percentage | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.deduction | number:'1.2-3'}}</td>
+                <td class="col-action">
+                  <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(aliquot.code)"></button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div style="text-align: right; font-weight: bold">
+                Dedução por dependente {{valDeduc | number:'1.2-3'}}
+              </div>
+            </ng-template>
+          </p-table>
+          <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+        </p-accordionTab>
+        <p-accordionTab header="INSS">
+          <p-table #tableAliquotInss [value]="aliquots" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="col-number-header">Valor inicial</th>
+                <th class="col-number-header">Valor final</th>
+                <th class="col-number-header">Percentual</th>
+                <th class="col-action-header" style="width: 4%"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-aliquot>
+              <tr>
+                <td class="col-number">{{aliquot.initialValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.finalValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.percentage | number:'1.2-3'}}</td>
+                <td class="col-action">
+                  <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(aliquot.code)"></button>
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="summary">
+              <div style="text-align: right; font-weight: bold">
+                Teto Maximo Contribuição {{valDeduc | number:'1.2-3'}}
+              </div>
+            </ng-template>
+          </p-table>
+          <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+        </p-accordionTab>
+        <p-accordionTab header="Salario Familia">
+          <p-table #tableAliquotSalFam [value]="aliquots" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="col-number-header">Valor inicial</th>
+                <th class="col-number-header">Valor final</th>
+                <th class="col-number-header">Dedução</th>
+                <th class="col-action-header" style="width: 4%"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-aliquot>
+              <tr>
+                <td class="col-number">{{aliquot.initialValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.finalValue | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.quota | number:'1.2-3'}}</td>
+                <td class="col-action">
+                  <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(aliquot.code)"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+        </p-accordionTab>
+        <p-accordionTab header="Vale Transporte">
+          <p-table #tableAliquotValeTran [value]="aliquots" [responsive]="true">
+            <ng-template pTemplate="header">
+              <tr>
+                <th class="col-number-header">Percentual</th>
+                <th class="col-number-header">Valor Unitario</th>
+                <th class="col-action-header" style="width: 4%"></th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-aliquot>
+              <tr>
+                <td class="col-number">{{aliquot.percentage | number:'1.2-3'}}</td>
+                <td class="col-number">{{aliquot.quota | number:'1.2-3'}}</td>
+                <td class="col-action">
+                  <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(aliquot.code)"></button>
+                </td>
+              </tr>
+            </ng-template>
+          </p-table>
+          <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+        </p-accordionTab>
+      </p-accordion>
+
+      <p-dialog header="Aliquota IRRF" [(visible)]="displayInputIrrf" modal="modal" [responsive]="true" [closable]="false" [width]="400">
+        <form autocomplete="off" (ngSubmit)="saveAliquot()" [formGroup]="formAliquot">
+
+          <div class="ui-g">
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="initialValue" formControlName="initialValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor inicial</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="finalValue" formControlName="finalValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor final</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="percentage" formControlName="percentage" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Percentual</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="deduction" formControlName="deduction" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Dedução</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="deductionDependent" formControlName="deductionDependent" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Dedução por dependente</label>
+              </span>
+            </div>
+          </div>
+
+          <p-footer>
+            <hr>
+            <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formAliquot.valid"></button>
+            <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+          </p-footer>
+        </form>
+      </p-dialog>
+
+      <p-dialog header="Aliquota INSS" [(visible)]="displayInputInss" modal="modal" [responsive]="true" [closable]="false" [width]="400">
+        <form autocomplete="off" (ngSubmit)="saveAliquot()" [formGroup]="formAliquot">
+
+          <div class="ui-g">
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="initialValue" formControlName="initialValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor inicial</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="finalValue" formControlName="finalValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor final</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="percentage" formControlName="percentage" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Percentual</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="deductionDependent" formControlName="deductionDependent" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Teto Maximo Contribuição</label>
+              </span>
+            </div>
+          </div>
+
+          <p-footer>
+            <hr>
+            <button pButton type="submit" pButton icon="fa-check" label="Salvar"></button>
+            <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+          </p-footer>
+        </form>
+      </p-dialog>
+
+      <p-dialog header="Aliquota Salario Familia" [(visible)]="displayInputSalFam" modal="modal" [responsive]="true" [closable]="false"
+        [width]="400">
+        <form autocomplete="off" (ngSubmit)="saveAliquot()" [formGroup]="formAliquot">
+
+          <div class="ui-g">
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="initialValue" formControlName="initialValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor inicial</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="finalValue" formControlName="finalValue" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Valor final</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="quota" formControlName="quota" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Cota</label>
+              </span>
+            </div>
+
+          </div>
+
+          <p-footer>
+            <hr>
+            <button pButton type="submit" pButton icon="fa-check" label="Salvar"></button>
+            <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" class="ui-button-info" (click)="hidenDialogInput()"></button>
+          </p-footer>
+        </form>
+      </p-dialog>
+
+      <p-dialog header="Aliquota Vale Transporte" [(visible)]="displayInputValTran" modal="modal" [responsive]="true" [closable]="false"
+        [width]="400">
+        <form autocomplete="off" (ngSubmit)="saveAliquot()" [formGroup]="formAliquot">
+
+          <div class="ui-g">
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="percentage" formControlName="percentage" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Percentual</label>
+              </span>
+            </div>
+
+            <div class="ui-g-12 ui-fluid inputFloat">
+              <span class="ui-float-label form-group">
+                <input pInputText type="text" name="quota" formControlName="quota" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+                  required>
+                <label for="float-input">Cota</label>
+              </span>
+            </div>
+
+          </div>
+
+          <p-footer>
+            <hr>
+            <button pButton type="submit" pButton icon="fa-check" label="Salvar"></button>
+            <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+          </p-footer>
+        </form>
+      </p-dialog>
+
+    </div>
+  </div>
+</div>

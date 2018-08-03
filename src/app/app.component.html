@@ -1,0 +1,86 @@
+<!-- <p-blockUI [blocked]="handleService.blockedDocument"></p-blockUI> -->
+<app-header></app-header>
+<app-navbar *ngIf="showMenu()"></app-navbar>
+<ng2-toasty></ng2-toasty>
+<router-outlet></router-outlet>
+<p-confirmDialog header="Confirmação" icon="fa fa-question-circle" #confirmacao>
+  <p-footer>
+    <button type="button" pButton icon="fa-check" label="Sim" (click)="confirmacao.accept()"></button>
+    <button type="button" pButton icon="fa-times" label="Não" class="ui-button-info" (click)="confirmacao.reject()"></button>
+  </p-footer>
+</p-confirmDialog>
+
+<p-dialog [showHeader]="false" [closable]="false" [modal]="true" [(visible)]="handleService.blockedDocument">
+  <div class="ui-g">
+    <div class="ui-g-12" style="text-align: center">
+      <h3>Aguarde</h3>
+    </div>
+    <div class="ui-g-12">
+      <p-progressBar mode="indeterminate" [style]="{'height': '6px'}"></p-progressBar>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog [closable]="false" header="{{handleService.title}}" [visible]="handleService.showError" [modal]="true" [responsive]="true"
+  [width]="700">
+  <span>
+    <div class="ui-g">
+      <div class="ui-g-1">
+        <a pButton class="ui-button-danger" icon="fa-times-circle"></a>
+      </div>
+      <div class="ui-g-11" style="padding-top: 12px">
+        {{handleService.message | uppercase}}
+      </div>
+      <div class="ui-g-12">
+        <li *ngFor="let item of handleService.stack">{{item}}</li>
+      </div>
+    </div>
+  </span>
+  <p-footer>
+    <button type="button" pButton (click)="handleService.showError = false" label="OK" class="ui-button-danger"></button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [closable]="false" header="{{handleService.title}}" [visible]="handleService.showInfo" [modal]="true" [responsive]="true"
+  [width]="500">
+  <span>
+    <div class="ui-g">
+      <div class="ui-g-1">
+        <a pButton class="ui-button-warning" icon="fa-exclamation-triangle"></a>
+      </div>
+      <div class="ui-g-11" style="padding-top: 12px">
+        {{handleService.message | uppercase}}
+      </div>
+      <div class="ui-g-12">
+        <li *ngFor="let item of handleService.stack">{{item}}</li>
+      </div>
+    </div>
+  </span>
+  <p-footer>
+    <button type="button" pButton (click)="handleService.showInfo = false" label="OK" class="ui-button-warning"></button>
+  </p-footer>
+</p-dialog>
+
+<p-dialog [closable]="false" header="{{handleService.title}}" [visible]="handleService.showWarn" [modal]="true" [responsive]="true"
+  [width]="500">
+  <span>
+    <div class="ui-g">
+      <div class="ui-g-1">
+        <a pButton class="ui-button-info" icon="fa-info"></a>
+      </div>
+      <div class="ui-g-11" style="padding-top: 12px">
+        {{handleService.message | uppercase}}
+      </div>
+      <div class="ui-g-12">
+        <li *ngFor="let item of handleService.stack">{{item}}</li>
+      </div>
+    </div>
+  </span>
+  <p-footer>
+    <button type="button" pButton (click)="handleService.showWarn = false" label="OK" class="ui-button-info"></button>
+  </p-footer>
+</p-dialog>
+
+<!-- <div *ngIf="handleService.blockedDocument">
+  <p-progressSpinner></p-progressSpinner>
+</div> -->

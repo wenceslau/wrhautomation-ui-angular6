@@ -1,0 +1,88 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+      <form autocomplete="off" #form="ngForm">
+        <div class="ui-g">
+          <button pButton type="button" icon="fa-save" label="Salvar" [disabled]="!canSave" (click)="saveAll()"></button>
+          <button pButton type="button" label="Gerar Contas Pagar" [disabled]="!canGenerate" (click)="generate()"></button>
+        </div>
+      </form>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+  <br>
+  <p-table #tablePayment [value]="payments" [responsive]="true">
+    <ng-template pTemplate="header">
+      <tr>
+        <th class="col-code-header" style="width: 4%"> ID</th>
+        <th class="col-string-header" style="width: 12%">Empresa</th>
+        <th class="col-string-header" style="width: 40%">Fornecedor</th>
+        <th class="col-string-header" style="width: 20%">Título</th>
+        <th class="col-date-header">Vencimento</th>
+        <th class="col-number-header">Valor</th>
+        <th class="col-action-header" style="width: 4%"></th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-payment >
+      <tr>
+        <td class="col-code">{{payment.code}}</td>
+        <td class="col-string">{{payment.companyName}}</td>
+        <td class="col-string">{{payment.supplierName}}</td>
+        <td class="col-string">{{payment.titleName}}</td>
+        <td class="col-date">{{payment.dueDate | date:' dd/MM/yyyy'}}</td>
+        <td class="col-number">{{payment.amount | number:'1.2-3'}}</td>
+        <td class="col-action">
+          <button pButton icon="fa-align-justify" pTooltip="Detalhamento" tooltipPosition="top" (click)="showDialogDetail(payment)"></button>
+        </td>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="footer">
+      <tr>
+        <td colspan="5" style="font-weight: bold">Total</td>
+        <td class="col-number" style="font-weight: bold">{{ amountPayment | number:'1.2-3'}}</td>
+        <td></td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+
+  <p-dialog header="Detalhamento Fornecedor [{{ payment?.supplierName}} - {{ payment?.amount  | number:'1.2-3'}}]" [(visible)]="displayDetail"
+    modal="modal" [responsive]="true" [closable]="false" [width]="800">
+    <p-table #tablePaymentDetail [value]="paymentDetail" [responsive]="true">
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="col-code-header" style="width: 4%">ID</th>
+          <th class="col-string-header" style="width: 45%">Descrição</th>
+          <th class="col-number-header" style="width: 12%">Valor</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-paymentDetail>
+        <tr>
+          <td class="col-code">{{paymentDetail.code}}</td>
+          <td class="col-string">{{paymentDetail.description}}</td>
+          <td class="col-number">{{paymentDetail.amount | number:'1.2-3'}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="2" style="font-weight: bold">Total</td>
+          <td class="col-number" style="font-weight: bold">{{ amountDetailPayment | number:'1.2-3'}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+    <p-footer>
+      <hr>
+      <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hideDialogDetail()"></button>
+    </p-footer>
+
+  </p-dialog>
+
+
+</div>

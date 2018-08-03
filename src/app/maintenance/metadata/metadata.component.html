@@ -1,0 +1,120 @@
+<div class="container">
+
+  <p-toolbar>
+    <div class="ui-toolbar-group-left">
+        <div class="ui-g">
+        <button pButton type="button" icon="fa-plus" label="Novo" (click)="showDialogInput(null)"></button>
+        <button pButton type="button" icon="fa-refresh" (click)="initListMetadata()"></button>
+      </div>
+    </div>
+    <div class="ui-toolbar-group-right">
+      <div class="ui-g">
+        <div style="padding-top: 4px">
+          <div style="text-align: right">{{handler.infoMessage}}</div>
+        </div>
+      </div>
+    </div>
+  </p-toolbar>
+
+  <div class="ui-g">
+
+    <div class="ui-g-12">
+
+      <p-table #tableMetadata [value]="metadatas" [responsive]="true">
+        <ng-template pTemplate="header">
+          <tr>
+            <th class="col-code-header" style="width: 4%">ID</th>
+            <th class="col-string-header" style="width: 50%">Descrição</th>
+            <th class="col-string-header" style="width: 25%">Chave</th>
+             <th class="col-action-header" style="width: 4%"></th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-metadata>
+          <tr>
+            <td class="col-code">{{metadata.code}}</td>
+            <td class="col-string">{{metadata.description}}</td>
+            <td class="col-string">{{metadata.key}}</td>
+             <td class="col-action">
+              <button pButton icon="fa-pencil" pTooltip="Editar" tooltipPosition="top" (click)="showDialogInput(metadata.code)"></button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+      <div style="text-align: right">{{ totalRecords + ' registros' }} </div>
+
+    </div>
+
+    <p-dialog header="Base de Dados" [(visible)]="displayInput" modal="modal" [responsive]="true" [closable]="false" [width]="850">
+      <form autocomplete="off" (ngSubmit)="saveMetadata()" [formGroup]="formMetadata">
+
+        <div class="ui-g">
+
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="description" formControlName="description" required>
+              <label for="float-input">Descricao</label>
+            </span>
+          </div>
+
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="key" formControlName="key" required>
+              <label for="float-input">Chave</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data1" formControlName="data1" required>
+              <label for="float-input">Valor 1</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data2" formControlName="data2">
+              <label for="float-input">Valor 2</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data3" formControlName="data3">
+              <label for="float-input">Valor 3</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data4" formControlName="data4">
+              <label for="float-input">Valor 4</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data5" formControlName="data5">
+              <label for="float-input">Valor 5</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="data6" formControlName="data6">
+              <label for="float-input">Valor 6</label>
+            </span>
+          </div>
+
+        </div>
+
+        <p-footer>
+          <hr>
+          <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formMetadata.valid"></button>
+          <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+        </p-footer>
+      </form>
+    </p-dialog>
+
+  </div>
+
+</div>

@@ -1,0 +1,264 @@
+<p-dialog header="Colaborador [{{formInput.get('person').get('name').value}}]" visible="true" modal="modal"
+[responsive]="true" [closable]="false" [width]="850">
+<form autocomplete="off" (ngSubmit)="save()" [formGroup]="formInput">
+
+  <p-tabView activeIndex="0">
+    <p-tabPanel header="Dados Pessoais">
+
+      <div class="ui-g" formGroupName="person">
+
+        <div class="ui-g-6 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-inputMask name="person" formControlName="cpf" mask="999.999.999-99" required></p-inputMask>
+            <label for="float-input">CPF</label>
+          </span>
+        </div>
+
+        <div class="ui-g-6 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="person" formControlName="rg" required>
+            <label for="float-input">RG</label>
+          </span>
+        </div>
+
+        <div class="ui-g-8 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="person" formControlName="name" required>
+            <label for="float-input">Nome</label>
+          </span>
+        </div>
+
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="person" formControlName="nickname" required>
+            <label for="float-input">Apelido</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-calendar dateFormat="dd/mm/yy" name="dateOfBirth" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="dateOfBirth"
+              required></p-calendar>
+            <label for="float-input">Data Nascimento</label>
+          </span>
+        </div>
+
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-inputMask name="person" formControlName="phone" mask="(99) 9999-9999" required></p-inputMask>
+            <label for="float-input">Telefone</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-inputMask name="person" formControlName="mobilePhone" mask="(99) 9 9999-9999" required></p-inputMask>
+            <label for="float-input">Celular</label>
+          </span>
+        </div>
+
+
+        <div formGroupName="address">
+          <div class="ui-g-12 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="address" formControlName="logradouro" required>
+              <label for="float-input">Logradouro</label>
+            </span>
+          </div>
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="person" formControlName="neighborhood" required>
+              <label for="float-input">Bairro</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <p-inputMask name="person" formControlName="cep" mask="99999-999" required></p-inputMask>
+              <label for="float-input">CEP</label>
+            </span>
+          </div>
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="person" formControlName="city" required>
+              <label for="float-input">Cidade</label>
+            </span>
+          </div>
+
+          <div class="ui-g-6 ui-fluid inputFloat">
+            <span class="ui-float-label form-group">
+              <input pInputText type="text" name="person" formControlName="stateOfCity" size="2" required>
+              <label for="float-input">Estado</label>
+            </span>
+          </div>
+        </div>
+
+      </div>
+
+    </p-tabPanel>
+    <p-tabPanel header="Dados Empregatícios">
+
+      <div class="ui-g">
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-calendar dateFormat="dd/mm/yy" name="dateOfHiring" [inline]=false [readonlyInput]=false [showIcon]=false formControlName="dateOfHiring"
+              required></p-calendar>
+            <label for="float-input">Contratação</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="situation" [options]="situations" [autoWidth]="false" formControlName="situation" placeholder="." required></p-dropdown>
+            <label for="float-input">Situação</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="company" [options]="companies" [autoWidth]="false" optionLabel="nameFantasy" formControlName="company"
+              placeholder="." (onChange)="changeCompany()" required></p-dropdown>
+            <label for="float-input">Empresa</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="position" [options]="positions" [autoWidth]="false" formControlName="position" placeholder="." (onChange)="changePosition(true)"
+              required></p-dropdown>
+            <label for="float-input">Posição</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="salary" [options]="salaries" [autoWidth]="false" formControlName="salary" placeholder="." (onChange)="changeSalary(true)"
+              required></p-dropdown>
+            <label for="float-input">Salário</label>
+          </span>
+        </div>
+
+        <div class="ui-g-4 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="payment" [options]="payments" [autoWidth]="false" formControlName="payment" placeholder="." (onChange)="changePayment(true)"
+              required></p-dropdown>
+            <label for="float-input">Pagamento</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="fixedSalary" formControlName="fixedSalary" currencyMask 
+            [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+            [style.background-color]="readonlyFixedSalary ? 'lightgrey' : 'white'"
+            [readonly]="readonlyFixedSalary" 
+            [required]="!readonlyFixedSalary">
+            <label for="float-input">Salário Fixo</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="lpt2Salary" formControlName="lpt2Salary" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }">
+            <label for="float-input">LPT2</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="quebraCaixa" formControlName="quebraCaixa" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+            [style.background-color]="readonlyQuebraCaixa ? 'lightgrey' : 'white'"
+            [readonly]="readonlyQuebraCaixa" 
+            [required]="!readonlyQuebraCaixa">
+            <label for="float-input">Quebra Caixa</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="garantia" formControlName="garantia" currencyMask [options]="{ prefix: '', thousands: '.', decimal: ',', allowNegative: false }"
+            [style.background-color]="readonlyGarantia ? 'lightgrey' : 'white'"
+            [readonly]="readonlyGarantia" 
+            [required]="!readonlyGarantia">
+            <label for="float-input">Garantia</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="numDependentIrrf" formControlName="numDependentIrrf" required>
+            <label for="float-input">Dependentes IRRF</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="numDependentFamilySalary" formControlName="numDependentFamilySalary" required>
+            <label for="float-input">Dependentes S. Familia</label>
+          </span>
+        </div>
+
+        <div class="ui-g-3 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <input pInputText type="text" name="monthlyHourlyLoad" formControlName="monthlyHourlyLoad" required>
+            <label for="float-input">Carga Horária (Horas)</label>
+          </span>
+        </div>
+
+        <div class="ui-g-2 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-checkbox label="Vale Transp." name="transportVoucher" formControlName="transportVoucher" binary="true"></p-checkbox>
+          </span>
+        </div>
+
+        <div class="ui-g-6 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="salesExternalCode" [options]="salesmans" [autoWidth]="false" formControlName="salesExternalCode" placeholder="."
+              [readonly]="readonlySalesExternalCode" 
+              [required]="!readonlySalesExternalCode">
+              </p-dropdown>
+            <label for="float-input">Assessor</label>
+          </span>
+        </div>
+
+        <div class="ui-g-6 ui-fluid inputFloat">
+          <span class="ui-float-label form-group">
+            <p-dropdown name="supplierExternalCode" [options]="suppliers" [autoWidth]="false" formControlName="supplierExternalCode" placeholder="." 
+              [readonly]="readonlySupplierExternalCode" 
+              [required]="!readonlySupplierExternalCode">
+              </p-dropdown>
+            <label for="float-input">Fornecedor</label>
+          </span>
+        </div>
+
+
+
+        <div class="ui-g-12 ui-fluid inputFloat" formGroupName="person">
+          <span class="ui-float-label form-group">
+            <textarea pInputTextarea name="information" rows="1" cols="87" formControlName="information"></textarea>
+            <label for="float-input">Informações</label>
+          </span>
+        </div>
+
+      </div>
+
+    </p-tabPanel>
+    <p-tabPanel header="Histórico">
+      <div class="ui-g-12 ui-fluid inputFloat">
+        <span class="ui-float-label form-group">
+          <p-checkbox label="Status" name="status" formControlName="status" binary="true"></p-checkbox>
+        </span>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <p-footer>
+    <hr>
+    <button pButton type="submit" pButton icon="fa-check" label="Salvar" [disabled]="!formInput.valid"></button>
+    <button pButton type="button" pButton icon="fa-close" label="Fechar" class="ui-button-info" (click)="hidenDialogInput()"></button>
+  </p-footer>
+</form>
+</p-dialog>
